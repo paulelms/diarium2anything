@@ -2,11 +2,18 @@
 
 namespace Diarium\To\Anything\Logger;
 
+use Psr\Log\InvalidArgumentException;
 use Psr\Log\LoggerInterface;
 use Psr\Log\LogLevel;
 
 class Cli implements LoggerInterface
 {
+
+    private $acceptedLevels = [
+        LogLevel::ALERT, LogLevel::CRITICAL, LogLevel::DEBUG,
+        LogLevel::EMERGENCY, LogLevel::ERROR, LogLevel::INFO,
+        LogLevel::NOTICE, LogLevel::WARNING,
+    ];
 
     public function emergency($message, array $context = array()) {
         $codes = array(33, 40);
@@ -58,7 +65,9 @@ class Cli implements LoggerInterface
      * @todo implement placeholders described in LoggerInterface
      */
     public function log($level, $message, array $context = array()) {
-        // TODO $context
+        if (! in_array($level, $this->acceptedLevels, true)) {
+            throw new InvalidArgumentException('invalid level: ' . $level);
+        }
         printf("[%s] %s: %s\n", date('d-m-Y H:i:s'), ucfirst($level), $message);
     }
 
