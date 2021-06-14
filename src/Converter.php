@@ -8,13 +8,13 @@ class Converter
 {
 
     /** @var ILoader */
-    private $loader;
+    private ILoader $loader;
 
     /** @var IExporter */
-    private $exporter;
+    private IExporter $exporter;
 
     /** @var LoggerInterface */
-    private $logger;
+    private LoggerInterface $logger;
 
     public function __construct(ILoader $loader, IExporter $exporter, LoggerInterface $logger)
     {

@@ -21,10 +21,13 @@
     ],
     "require": {
         "php": "^8.0",
+        "psr/log": "^1.1",
         "ext-sqlite3": "*",
-        "psr/log": "^1.1"
+        "ext-fileinfo": "*",
+        "ext-readline": "*"
     },
     "require-dev": {
+        "roave/security-advisories": "dev-latest",
         "kint-php/kint": "*",
         "phpunit/phpunit": "^8.5.5 || ^9.3.5"
     },

@@ -26,9 +26,7 @@ if ($argc !== 4) {
     Util\CommandLine::printUsage();
     exit(Util\ExitCodes::EX_USAGE);
 }
-$outputType = $argv[1];
-$inputPath = $argv[2];
-$outputPath = $argv[3];
+list(,$outputType, $inputPath, $outputPath) = $argv;
 
 if (file_exists($outputPath) || ! mkdir($outputPath)) {
     $logger->error('can\'t create directory: ' . $outputPath);

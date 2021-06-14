@@ -8,12 +8,12 @@ class Entry
 {
 
     /** @var string */
-    private $title;
+    private string $title;
 
     /** @var string */
-    private $text;
+    private string $text;
 
     /** @var DateTimeImmutable */
-    private $dateTime;
+    private DateTimeImmutable $dateTime;
 
 }
