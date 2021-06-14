@@ -1,0 +1,41 @@
+{
+    "name": "paulelms/diarium2anything",
+    "type": "project",
+    "description": "Diarium exporter",
+    "keywords": [
+        "diarium",
+        "diary",
+        "emacs",
+        "org-mode",
+        "org-roam",
+        "export",
+        "markdown"
+    ],
+    "homepage": "https://github.com/paulelms/diarium2anything",
+    "authors": [
+        {
+            "name": "Pavel Vyazovoy",
+            "email": "paul@elms.pro",
+            "homepage": "https://paul.elms.pro"
+        }
+    ],
+    "require": {
+        "php": "^8.0",
+        "ext-sqlite3": "*",
+        "psr/log": "^1.1"
+    },
+    "require-dev": {
+        "kint-php/kint": "*",
+        "phpunit/phpunit": "^8.5.5 || ^9.3.5"
+    },
+    "autoload": {
+        "psr-4": {
+            "Diarium\\To\\Anything\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Diarium\\To\\Anything\\Tests\\": "tests/"
+        }
+    }
+}
