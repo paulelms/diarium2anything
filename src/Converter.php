@@ -2,6 +2,7 @@
 
 namespace Diarium\To\Anything;
 
+use Diarium\To\Anything\Exception;
 use Psr\Log\LoggerInterface;
 
 class Converter
@@ -23,9 +24,13 @@ class Converter
         $this->logger = $logger;
     }
 
+    /**
+     * @throws Exception\NotImplemented
+     * @return void
+     */
     public function process(): void
     {
-        // TODO WIP
+        throw new \Exception('WIP');
     }
 
     private function getLoader(): ILoader

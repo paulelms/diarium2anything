@@ -2,14 +2,16 @@
 <?php declare(strict_types=1);
 
 use Diarium\To\Anything\Converter;
-use Diarium\To\Anything\Loader;
-use Diarium\To\Anything\Exporter;
+use Diarium\To\Anything\Exception;
+use Diarium\To\Anything\Exception\NotImplemented;
+use Diarium\To\Anything\ExporterFactory;
+use Diarium\To\Anything\LoaderFactory;
 use Diarium\To\Anything\Logger;
 use Diarium\To\Anything\Util;
 
 require __DIR__ . '/vendor/autoload.php';
 
-// useful debugger
+// useful var dump
 if (class_exists('Kint')) {
     Kint::$aliases[] = 'dd';
     function dd(...$vars)
@@ -19,15 +21,17 @@ if (class_exists('Kint')) {
     }
 }
 
-// psr/log implementation
+/** @var \Psr\Log\LoggerInterface $logger */
 $logger = new Logger\Cli();
 
 if ($argc !== 4) {
     Util\CommandLine::printUsage();
     exit(Util\ExitCodes::EX_USAGE);
 }
+
 list(,$outputType, $inputPath, $outputPath) = $argv;
 
+// TODO more human cli ui
 if (file_exists($outputPath) || ! mkdir($outputPath)) {
     $logger->error('can\'t create directory: ' . $outputPath);
     exit(Util\ExitCodes::EX_CANTCREAT);
@@ -38,42 +42,25 @@ if (! file_exists($inputPath)) {
     exit(Util\ExitCodes::EX_USAGE);
 }
 
-$ext = pathinfo($inputPath, PATHINFO_EXTENSION);
-$mimeType = mime_content_type($inputPath);
-
-// TODO plain text / html / docx export
-switch (true) {
-    case $ext === 'diary' && $mimeType === 'application/x-sqlite3':
-        $loader = new Loader\SQLite();
-        break;
-    default:
-        $logger->error('unsupported input file type');
-        exit(Util\ExitCodes::EX_USAGE);
-}
-
-switch ($outputType) {
-    case 'org-roam':
-        die('not implemented'); // FIXME WIP
-        $exporter = new Exporter\Org\Roam();
-        break;
-    case 'org-journal':
-        die('not implemented'); // FIXME WIP
-        $exporter = new Exporter\Org\Journal();
-        break;
-    case 'markdown':
-        die('not implemented'); // FIXME WIP
-        $exporter = new Exporter\Markdown();
-        break;
-    default:
-        $logger->error('unsupported input file type' );
-        exit(Util\ExitCodes::EX_USAGE);
-}
-
 try {
+    $ext = pathinfo($inputPath, PATHINFO_EXTENSION);
+    $mimeType = mime_content_type($inputPath);
+    if ($loaderType = LoaderFactory::detectLoaderType($ext, $mimeType)) {
+        $loader = LoaderFactory::getLoader($loaderType);
+    } else {
+        $logger->error('unknown diary format');
+        exit(Util\ExitCodes::EX_USAGE);
+    }
+
+    $exporter = ExporterFactory::getExporter($outputType);
+
     $converter = new Converter($loader, $exporter, $logger);
     $converter->process();
+} catch (Exception\NotImplemented $e) {
+    $logger->error('feature not implemented: ' . $e->getMessage());
+    exit(Util\ExitCodes::EX_USAGE);
 } catch (\Exception $e) {
-    $logger->error('process error');
+    $logger->error('unhandled error: ' . $e->getMessage());
     exit(Util\ExitCodes::EX_SOFTWARE);
 }
 
