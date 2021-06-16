@@ -2,7 +2,6 @@
 
 namespace Diarium\To\Anything;
 
-use Diarium\To\Anything\Exception;
 use Psr\Log\LoggerInterface;
 
 class Converter

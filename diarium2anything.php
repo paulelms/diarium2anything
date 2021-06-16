@@ -3,7 +3,6 @@
 
 use Diarium\To\Anything\Converter;
 use Diarium\To\Anything\Exception;
-use Diarium\To\Anything\Exception\NotImplemented;
 use Diarium\To\Anything\ExporterFactory;
 use Diarium\To\Anything\LoaderFactory;
 use Diarium\To\Anything\Logger;
@@ -29,9 +28,9 @@ if ($argc !== 4) {
     exit(Util\ExitCodes::EX_USAGE);
 }
 
-list(,$outputType, $inputPath, $outputPath) = $argv;
+[, $outputType, $inputPath, $outputPath] = $argv;
 
-// TODO more human cli ui
+// TODO more human cli
 if (file_exists($outputPath) || ! mkdir($outputPath)) {
     $logger->error('can\'t create directory: ' . $outputPath);
     exit(Util\ExitCodes::EX_CANTCREAT);

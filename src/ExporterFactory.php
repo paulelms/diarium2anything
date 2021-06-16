@@ -2,8 +2,6 @@
 
 namespace Diarium\To\Anything;
 
-use Diarium\To\Anything\Exception;
-
 class ExporterFactory
 {
 
