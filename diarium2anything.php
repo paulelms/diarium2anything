@@ -42,17 +42,9 @@ if (! file_exists($inputPath)) {
 }
 
 try {
-    $ext = pathinfo($inputPath, PATHINFO_EXTENSION);
-    $mimeType = mime_content_type($inputPath);
-    if ($loaderType = LoaderFactory::detectLoaderType($ext, $mimeType)) {
-        $loader = LoaderFactory::getLoader($loaderType);
-    } else {
-        $logger->error('unknown diary format');
-        exit(Util\ExitCodes::EX_USAGE);
-    }
-
+    $fileInfo = new SplFileInfo($inputPath);
+    $loader = LoaderFactory::getLoader($fileInfo);
     $exporter = ExporterFactory::getExporter($outputType);
-
     $converter = new Converter($loader, $exporter, $logger);
     $converter->process();
 } catch (Exception\NotImplemented $e) {

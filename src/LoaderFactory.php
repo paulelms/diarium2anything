@@ -10,8 +10,14 @@ class LoaderFactory
     /**
      * @throws Exception\NotImplemented
      */
-    public static function getLoader(string $loaderType): ILoader
+    public static function getLoader(\SplFileInfo $fileInfo): ILoader
     {
+        if (! $fileInfo->isReadable()) {
+            throw new Exception\FileReadError($fileInfo);
+        }
+
+        $loaderType = self::detectLoaderType($fileInfo);
+
         // TODO plain text / html / docx export
         switch ($loaderType) {
             case self::TYPE_DIARIUM_DB:
@@ -20,13 +26,13 @@ class LoaderFactory
         throw new Exception\NotImplemented('diary type: ' . $loaderType);
     }
 
-    public static function detectLoaderType(string $fileExt, string $mimeType): ?string
+    private static function detectLoaderType(\SplFileInfo $fileInfo): ?string
     {
-        switch (true) {
-            case $fileExt === 'diary' && $mimeType === 'application/x-sqlite3':
-                return self::TYPE_DIARIUM_DB;
-        }
-        return null;
+        $mimeType = mime_content_type($fileInfo->getRealPath());
+        return match (true) {
+            $fileInfo->getExtension() === 'diary' && $mimeType === 'application/x-sqlite3' => self::TYPE_DIARIUM_DB,
+            default => null,
+        };
     }
 
 }
