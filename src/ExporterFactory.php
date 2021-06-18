@@ -23,6 +23,6 @@ class ExporterFactory
             // case self::TYPE_MARKDOWN:
             //     return new Exporter\Markdown();
         }
-        throw new Exception\NotImplemented('output format: ' . $outputType);
+        throw new Exception\NotImplemented('unsupported output format: ' . $outputType);
     }
 }

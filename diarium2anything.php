@@ -42,13 +42,18 @@ if (! file_exists($inputPath)) {
 }
 
 try {
-    $fileInfo = new SplFileInfo($inputPath);
-    $loader = LoaderFactory::getLoader($fileInfo);
+    $fileInfo = new \SplFileInfo($inputPath);
+    if (! $fileInfo->isReadable()) {
+        throw new Exception\FileReadError($fileInfo);
+    }
+    $mimeType = mime_content_type($fileInfo->getRealPath()) ?: null;
+
+    $loader = LoaderFactory::getLoader($fileInfo->getExtension(), $mimeType);
     $exporter = ExporterFactory::getExporter($outputType);
     $converter = new Converter($loader, $exporter, $logger);
     $converter->process();
-} catch (Exception\NotImplemented $e) {
-    $logger->error('feature not implemented: ' . $e->getMessage());
+} catch (Exception\Loader\UnknownFormat | Exception\NotImplemented $e) {
+    $logger->error($e->getMessage());
     exit(Util\ExitCodes::EX_USAGE);
 } catch (\Exception $e) {
     $logger->error('unhandled error: ' . $e->getMessage());

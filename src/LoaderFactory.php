@@ -5,34 +5,20 @@ namespace Diarium\To\Anything;
 class LoaderFactory
 {
 
-    public const TYPE_DIARIUM_DB = 'diarium';
+    private const EXT_DIARIUM_DB    = 'diary';
+    private const MIME_DIARIUM_DB   = 'application/x-sqlite3';
 
     /**
-     * @throws Exception\NotImplemented
+     * @throws Exception\Loader\UnknownFormat
      */
-    public static function getLoader(\SplFileInfo $fileInfo): ILoader
+    public static function getLoader(string $fileExtension, ?string $fileMimeType): ILoader
     {
-        if (! $fileInfo->isReadable()) {
-            throw new Exception\FileReadError($fileInfo);
+        // TODO plain text / html / docx
+        switch (true) {
+            case $fileExtension === self::EXT_DIARIUM_DB && $fileMimeType === self::MIME_DIARIUM_DB:
+                return new Loader\SQLite(); // FIXME not implemented
         }
-
-        $loaderType = self::detectLoaderType($fileInfo);
-
-        // TODO plain text / html / docx export
-        switch ($loaderType) {
-            case self::TYPE_DIARIUM_DB:
-                return new Loader\SQLite();
-        }
-        throw new Exception\NotImplemented('diary type: ' . $loaderType);
-    }
-
-    private static function detectLoaderType(\SplFileInfo $fileInfo): ?string
-    {
-        $mimeType = mime_content_type($fileInfo->getRealPath());
-        return match (true) {
-            $fileInfo->getExtension() === 'diary' && $mimeType === 'application/x-sqlite3' => self::TYPE_DIARIUM_DB,
-            default => null,
-        };
+        throw new Exception\Loader\UnknownFormat($fileExtension, $fileMimeType, 'Loader: unsupported file format');
     }
 
 }
