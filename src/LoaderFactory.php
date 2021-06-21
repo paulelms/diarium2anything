@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Diarium\To\Anything;
 
-class LoaderFactory
+final class LoaderFactory
 {
 
     private const EXT_DIARIUM_DB    = 'diary';

@@ -3,7 +3,7 @@ declare(strict_types=1);
 
 namespace Diarium\To\Anything;
 
-class ExporterFactory
+final class ExporterFactory
 {
 
     public const TYPE_ORG_ROAM    = 'org-roam';
