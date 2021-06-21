@@ -30,6 +30,7 @@ class Converter
      */
     public function process(): void
     {
+        d($this->getLoader()->getCount());
         throw new \Exception('WIP');
     }
 

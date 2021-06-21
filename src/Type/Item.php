@@ -12,26 +12,11 @@ abstract class Item
         return [];
     }
 
-    abstract public function toArray();
+    abstract public function toArray(): array;
 
-    public static function createFromArray(array $row)
+    public static function createFromArray(array $row): static
     {
         return new static();
-    }
-
-    /**
-     * @param array $updates
-     * @return static
-     */
-    public function getUpdated(array $updates)
-    {
-        $fields = $this->toArray();
-        $readOnlyFields = $this->getReadOnlyFields();
-        foreach ($updates as $fieldName => $fieldValue) {
-            if (in_array($fieldName, $readOnlyFields, true)) {    continue; }
-            $fields[$fieldName] = $fieldValue;
-        }
-        return static::createFromArray($fields);
     }
 
 }

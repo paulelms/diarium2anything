@@ -43,12 +43,7 @@ if (! file_exists($inputPath)) {
 
 try {
     $fileInfo = new \SplFileInfo($inputPath);
-    if (! $fileInfo->isReadable()) {
-        throw new Exception\FileReadError($fileInfo);
-    }
-    $mimeType = mime_content_type($fileInfo->getRealPath()) ?: null;
-
-    $loader = LoaderFactory::getLoader($fileInfo->getExtension(), $mimeType);
+    $loader = LoaderFactory::getLoader($fileInfo);
     $exporter = ExporterFactory::getExporter($outputType);
     $converter = new Converter($loader, $exporter, $logger);
     $converter->process();

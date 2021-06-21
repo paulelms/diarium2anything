@@ -12,12 +12,19 @@ final class LoaderFactory
     /**
      * @throws Exception\Loader\UnknownFormat
      */
-    public static function getLoader(string $fileExtension, ?string $fileMimeType): ILoader
+    public static function getLoader(\SplFileInfo $fileInfo): ILoader
     {
-        // TODO plain text / html / docx
+        if (! $fileInfo->isReadable()) {
+            throw new Exception\FileReadError($fileInfo);
+        }
+
+        $fileExtension = $fileInfo->getExtension();
+        $fileMimeType = mime_content_type($fileInfo->getRealPath()) ?: null;
         switch (true) {
             case $fileExtension === self::EXT_DIARIUM_DB && $fileMimeType === self::MIME_DIARIUM_DB:
-                return new Loader\SQLite(); // FIXME not implemented
+                $sqlite = new \SQLite3($fileInfo->getRealPath());
+                return new Loader\DiariumDb($sqlite);
+            // TODO plain text / html / docx
         }
         throw new Exception\Loader\UnknownFormat($fileExtension, $fileMimeType, 'Loader: unsupported file format');
     }
